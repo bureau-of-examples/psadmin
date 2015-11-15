@@ -32,3 +32,8 @@ Install bootstrap and jQuery:
 Install eslint:
 <code>npm install --save gulp-eslint@0.15.0</code>
 
+Install React, React Router, Flux:
+<code>npm install --save react@0.13.3 react-router@0.13.3 flux@2.0.3</code>
+
+Now all dependencies are configured in package.json.
+To recreate the node_modules directory simply run <code>npm install</code>
