@@ -26,5 +26,6 @@ Add .gitignore
 Install browserify:
 <code>npm install --save browserify@11.0.1 reactify@1.1.1 vinyl-source-stream@1.1.0</code>
 
-
+Install bootstrap and jQuery:
+<code>npm install --save bootstrap@3.3.5 jquery@2.1.4 gulp-concat@2.6.0</code>
 

@@ -5,7 +5,8 @@ var connect = require('gulp-connect'); //run a local dev web server
 var open = require('gulp-open'); //open a url in a web browser
 var browserify = require('browserify'); //bundles js
 var reactify = require('reactify'); //transforms react jsx to js
-var source = require("vinyl-source-stream");
+var source = require("vinyl-source-stream"); //use conventional text streams with gulp
+var concat = require("gulp-concat"); //concatenates files
 
 var config = {
     port: 9005,
@@ -14,6 +15,10 @@ var config = {
         html: "./src/*.html",
         js: "./src/**/*.js",
         mainJS: "./src/main.js",
+        css: [
+            "node_modules/bootstrap/dist/css/bootstrap.min.css",
+            "node_modules/bootstrap/dist/css/bootstrap.theme.min.css"
+        ],
         dist: "./dist",
         src: "./src"
     }
@@ -42,7 +47,7 @@ gulp.task("reloadHtmlFiles", function(){
 });
 
 gulp.task("processJS", function(){
-    browserify(config.paths.mainJS)
+    browserify(config.paths.mainJS)//other js files are imported from this the main.js via require()
         .transform(reactify)
         .bundle()
         .on("error", console.error.bind(console))
@@ -52,9 +57,16 @@ gulp.task("processJS", function(){
         .pipe(connect.reload());
 });
 
+gulp.task("processCSS", function(){
+    gulp.src(config.paths.css)
+        .pipe(concat("bundle.css"))
+        .pipe(gulp.dest(config.paths.dist + "/css"))
+        .pipe(gulp.dest(config.paths.src + "/css")); //for intellij
+});
+
 gulp.task("watchHtmlFiles", function(){
    gulp.watch(config.paths.html, ["reloadHtmlFiles"]);
    gulp.watch(config.paths.js, ["processJS"]);
 });
 
-gulp.task("default", ["reloadHtmlFiles", "processJS", "openBrowser", "watchHtmlFiles"]);
+gulp.task("default", ["reloadHtmlFiles", "processJS", "processCSS", "openBrowser", "watchHtmlFiles"]);
