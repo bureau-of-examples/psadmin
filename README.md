@@ -29,3 +29,6 @@ Install browserify:
 Install bootstrap and jQuery:
 <code>npm install --save bootstrap@3.3.5 jquery@2.1.4 gulp-concat@2.6.0</code>
 
+Install eslint:
+<code>npm install --save gulp-eslint@0.15.0</code>
+

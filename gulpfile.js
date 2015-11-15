@@ -7,13 +7,14 @@ var browserify = require('browserify'); //bundles js
 var reactify = require('reactify'); //transforms react jsx to js
 var source = require("vinyl-source-stream"); //use conventional text streams with gulp
 var concat = require("gulp-concat"); //concatenates files
+var lint = require("gulp-eslint"); //lint js and jsx files
 
 var config = {
     port: 9005,
     devBaseUrl: "http://localhost",
     paths: {
         html: "./src/*.html",
-        js: "./src/**/*.js",
+        js: ["./src/**/*.js","!./**/bundle.js"],
         mainJS: "./src/main.js",
         css: [
             "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -64,9 +65,15 @@ gulp.task("processCSS", function(){
         .pipe(gulp.dest(config.paths.src + "/css")); //for intellij
 });
 
-gulp.task("watchHtmlFiles", function(){
-   gulp.watch(config.paths.html, ["reloadHtmlFiles"]);
-   gulp.watch(config.paths.js, ["processJS"]);
+gulp.task("lint", function(){
+    return gulp.src(config.paths.js)
+        .pipe(lint({config: 'eslint.config.json'}))
+        .pipe(lint.format());
 });
 
-gulp.task("default", ["reloadHtmlFiles", "processJS", "processCSS", "openBrowser", "watchHtmlFiles"]);
+gulp.task("watchHtmlFiles", function(){
+   gulp.watch(config.paths.html, ["reloadHtmlFiles"]);
+   gulp.watch(config.paths.js, ["processJS", "lint"]);
+});
+
+gulp.task("default", ["reloadHtmlFiles", "processJS", "lint", "processCSS", "openBrowser", "watchHtmlFiles"]);
