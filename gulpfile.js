@@ -3,13 +3,19 @@
 var gulp = require('gulp');
 var connect = require('gulp-connect'); //run a local dev web server
 var open = require('gulp-open'); //open a url in a web browser
+var browserify = require('browserify'); //bundles js
+var reactify = require('reactify'); //transforms react jsx to js
+var source = require("vinyl-source-stream");
 
 var config = {
     port: 9005,
     devBaseUrl: "http://localhost",
     paths: {
         html: "./src/*.html",
-        dist: "./dist"
+        js: "./src/**/*.js",
+        mainJS: "./src/main.js",
+        dist: "./dist",
+        src: "./src"
     }
 };
 
@@ -35,8 +41,20 @@ gulp.task("reloadHtmlFiles", function(){
         .pipe(connect.reload());//I assume connect.reload will not do anything if the web server is not up.
 });
 
-gulp.task("watchHtmlFiles", function(){
-   gulp.watch(config.paths.html, ["reloadHtmlFiles"]);
+gulp.task("processJS", function(){
+    browserify(config.paths.mainJS)
+        .transform(reactify)
+        .bundle()
+        .on("error", console.error.bind(console))
+        .pipe(source("bundle.js"))
+        .pipe(gulp.dest(config.paths.dist + "/scripts"))
+        .pipe(gulp.dest(config.paths.src + "/scripts")) //for intellij
+        .pipe(connect.reload());
 });
 
-gulp.task("default", ["reloadHtmlFiles", "openBrowser", "watchHtmlFiles"]);
+gulp.task("watchHtmlFiles", function(){
+   gulp.watch(config.paths.html, ["reloadHtmlFiles"]);
+   gulp.watch(config.paths.js, ["processJS"]);
+});
+
+gulp.task("default", ["reloadHtmlFiles", "processJS", "openBrowser", "watchHtmlFiles"]);

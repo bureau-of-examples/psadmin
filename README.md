@@ -20,7 +20,11 @@ Create a gulp file:
 
 Then create all gulp tasks as per the course video.
 
+Add .gitignore 
+<code>echo node_modules/ >.gitignore</code>
 
+Install browserify:
+<code>npm install --save browserify@11.0.1 reactify@1.1.1 vinyl-source-stream@1.1.0</code>
 
 
 
