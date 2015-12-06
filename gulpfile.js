@@ -15,10 +15,12 @@ var config = {
     paths: {
         html: "./src/*.html",
         js: ["./src/**/*.js","!./**/bundle.js"],
+        images: "./src/images/*",
         mainJS: "./src/main.js",
         css: [
             "node_modules/bootstrap/dist/css/bootstrap.min.css",
-            "node_modules/bootstrap/dist/css/bootstrap.theme.min.css"
+            "node_modules/bootstrap/dist/css/bootstrap.theme.min.css",
+            "src/css/site.css"
         ],
         dist: "./dist",
         src: "./src"
@@ -65,6 +67,15 @@ gulp.task("processCSS", function(){
         .pipe(gulp.dest(config.paths.src + "/css")); //for intellij
 });
 
+gulp.task("publishImages", function(){
+    gulp.src(config.paths.images)
+        .pipe(gulp.dest(config.paths.dist + "/images"))
+        .pipe(connect.reload());
+
+    gulp.src("./src/favicon.ico")
+        .pipe(gulp.dest(config.paths.dist));
+});
+
 gulp.task("lint", function(){
     return gulp.src(config.paths.js)
         .pipe(lint({config: 'eslint.config.json'}))
@@ -76,4 +87,4 @@ gulp.task("watchHtmlFiles", function(){
    gulp.watch(config.paths.js, ["processJS", "lint"]);
 });
 
-gulp.task("default", ["reloadHtmlFiles", "processJS", "lint", "processCSS", "openBrowser", "watchHtmlFiles"]);
+gulp.task("default", ["reloadHtmlFiles", "processJS", "lint", "processCSS", "publishImages", "openBrowser", "watchHtmlFiles"]);
