@@ -2,3 +2,7 @@
     height:60px;
     margin-top:-20px;
 }
+
+.jumbotron .header {
+    margin-left: 1em;
+}
